@@ -15,8 +15,8 @@
 
   MIT license, all text above must be included in any redistribution
  *****************************************************************************/
-#ifndef ADAFRUIT_MLX90393_H
-#define ADAFRUIT_MLX90393_H
+#ifndef ADAFRUIT_MLX90393_MODIFIED_H
+#define ADAFRUIT_MLX90393_MODIFIED_H
 
 #include "Arduino.h"
 #include <Adafruit_I2CDevice.h>
@@ -34,6 +34,7 @@
 #define MLX90393_HALL_CONF (0x0C)     /**< Hall plate spinning rate adj. */
 #define MLX90393_STATUS_OK (0x00)     /**< OK value for status response. */
 #define MLX90393_STATUS_SMMODE (0x08) /**< SM Mode status response. */
+#define MLX90393_STATUS_BMODE (0x20) /**< Busrt Mode status response. */
 #define MLX90393_STATUS_RESET (0x01)  /**< Reset value for status response. */
 #define MLX90393_STATUS_ERROR (0xFF)  /**< OK value for status response. */
 #define MLX90393_STATUS_MASK (0xFC)   /**< Mask for status OK checks. */
@@ -180,6 +181,7 @@ public:
 
   bool readMeasurement(float *x, float *y, float *z);
   bool startSingleMeasurement(void);
+  bool Adafruit_MLX90393::startBurstMode(void);
 
   bool setGain(enum mlx90393_gain gain);
   enum mlx90393_gain getGain(void);

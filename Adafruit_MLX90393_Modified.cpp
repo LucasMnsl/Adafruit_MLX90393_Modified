@@ -15,7 +15,7 @@
 
   MIT license, all text above must be included in any redistribution
  *****************************************************************************/
-#include "Adafruit_MLX90393.h"
+#include "Adafruit_MLX90393_Modified.h"
 
 /**
  * Instantiates a new Adafruit_MLX90393 class instance
@@ -306,6 +306,22 @@ bool Adafruit_MLX90393::startSingleMeasurement(void) {
 }
 
 /**
+ * Begin a busrt mode on all axes
+ *
+ * @return True on command success
+ */
+bool Adafruit_MLX90393::startBurstMode(void) {
+  uint8_t tx[1] = {MLX90393_REG_SB | MLX90393_AXIS_ALL};
+
+  /* Set the device to single measurement mode */
+  uint8_t stat = transceive(tx, sizeof(tx), NULL, 0, 0);
+  if ((stat == MLX90393_STATUS_OK) || (stat == MLX90393_STATUS_BMODE)) {
+    return true;
+  }
+  return false;
+}
+
+/**
  * Reads data from data register & returns the results.
  *
  * @param x     Pointer to where the 'x' value should be stored.
@@ -319,9 +335,9 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
   uint8_t rx[6] = {0};
 
   /* Read a single data sample. */
-  if (transceive(tx, sizeof(tx), rx, sizeof(rx), 0) != MLX90393_STATUS_OK) {
+  /*if (*/transceive(tx, sizeof(tx), rx, sizeof(rx), 0);/* != MLX90393_STATUS_OK) {
     return false;
-  }
+  }*/
 
   int16_t xi, yi, zi;
 
