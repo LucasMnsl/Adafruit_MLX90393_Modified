@@ -58,7 +58,7 @@ boolean Adafruit_MLX90393::begin_SPI(uint8_t cs_pin, SPIClass *theSPI) {
   if (!spi_dev) {
     _cspin = cs_pin;
     spi_dev = new Adafruit_SPIDevice(cs_pin,
-                                     1000000,               // frequency
+                                     10000000,               // frequency
                                      SPI_BITORDER_MSBFIRST, // bit order
                                      SPI_MODE3,             // data mode
                                      theSPI);
@@ -367,6 +367,28 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
 }
 
 /**
+ * Reads data from data register & returns the results without any process.
+ *
+ * @param x     Pointer to where the 'x' value should be stored.
+ * @param y     Pointer to where the 'y' value should be stored.
+ * @param z     Pointer to where the 'z' value should be stored.
+ *
+ * @return True on command success
+ */
+bool Adafruit_MLX90393::readRawMeasurement(uint8_t data[6]) {
+  uint8_t tx[1] = {MLX90393_REG_RM | MLX90393_AXIS_ALL};
+  uint8_t rx[6] = {0};
+
+  /* Read a single data sample. */
+  /*if (*/transceive(tx, sizeof(tx), rx, sizeof(rx), 0); /*!= MLX90393_STATUS_OK) {
+    return false;
+  }*/
+  memcpy(data, rx, 6);
+
+  return true;
+}
+
+/**
  * Performs a single X/Y/Z conversion and returns the results.
  *
  * @param x     Pointer to where the 'x' value should be stored.
@@ -382,8 +404,28 @@ bool Adafruit_MLX90393::readData(float *x, float *y, float *z) {
   // tconv = f(OSR, DIG_FILT, OSR2, ZYXT)
   // For now, using Table 18 from datasheet
   // Without +10ms delay measurement doesn't always seem to work
-  delay(mlx90393_tconv[_dig_filt][_osr] + 10);
+  delay(mlx90393_tconv[_dig_filt][_osr] + 1);
   return readMeasurement(x, y, z);
+}
+
+/**
+ * Performs a single X/Y/Z conversion and returns the results without any process.
+ *
+ * @param x     Pointer to where the 'x' value should be stored.
+ * @param y     Pointer to where the 'y' value should be stored.
+ * @param z     Pointer to where the 'z' value should be stored.
+ *
+ * @return True if the operation succeeded, otherwise false.
+ */
+bool Adafruit_MLX90393::readRawData(uint8_t data[6]) {
+  if (!startSingleMeasurement())
+    return false;
+  // See MLX90393 Getting Started Guide for fancy formula
+  // tconv = f(OSR, DIG_FILT, OSR2, ZYXT)
+  // For now, using Table 18 from datasheet
+  // Without +10ms delay measurement doesn't always seem to work
+  delay(mlx90393_tconv[_dig_filt][_osr] + 1);
+  return readRawMeasurement(data);
 }
 
 bool Adafruit_MLX90393::writeRegister(uint8_t reg, uint16_t data) {

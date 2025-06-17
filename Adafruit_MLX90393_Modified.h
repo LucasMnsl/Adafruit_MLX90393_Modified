@@ -180,8 +180,10 @@ public:
   bool exitMode(void);
 
   bool readMeasurement(float *x, float *y, float *z);
+  bool readRawMeasurement(uint8_t data[6]);
+
   bool startSingleMeasurement(void);
-  bool Adafruit_MLX90393::startBurstMode(void);
+  bool startBurstMode(void);
 
   bool setGain(enum mlx90393_gain gain);
   enum mlx90393_gain getGain(void);
@@ -197,6 +199,7 @@ public:
 
   bool setTrigInt(bool state);
   bool readData(float *x, float *y, float *z);
+  bool readRawData(uint8_t data[6]);
 
   bool getEvent(sensors_event_t *event);
   void getSensor(sensor_t *sensor);
